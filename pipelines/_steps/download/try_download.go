@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/getsentry/sentry-go"
 	"github.com/prometheus/client_golang/prometheus"
@@ -192,7 +193,13 @@ func TryDownload(ctx rcontext.RequestContext, origin string, mediaId string) (*d
 					ctx.Log.Debug("Non-fatal error closing redirected MSC3916 body: ", err)
 				}
 
-				resp, err = http.DefaultClient.Get(locationHeader)
+				client := matrix.NewHttpClient(ctx, &matrix.HttpClientConfig{
+					Timeout:                time.Duration(ctx.Config.TimeoutSeconds.Federation) * time.Second,
+					AllowUnsafeCertificate: false,
+					AllowedCIDRs:           []string{},
+					DeniedCIDRs:            []string{},
+				})
+				resp, err = client.Get(locationHeader)
 				if err != nil {
 					errFn(err)
 					return

@@ -91,6 +91,8 @@ homeservers:
     name: example.org
 
     # The base URL to where the homeserver can actually be reached by MMR.
+    # Caution: this URL is not validated for SSRF or private IPs. Ensure this variable is
+    # populated from a trusted source.
     csApi: "https://example.org/"
 
     # The number of consecutive failures in calling this homeserver before the

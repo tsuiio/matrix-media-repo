@@ -44,6 +44,8 @@ func doRequest(ctx rcontext.RequestContext, method string, urlStr string, body i
 		req.Header.Set("X-Real-IP", ipAddr)
 	}
 
+	// Note: We don't use the matrix.NewHttpClient (safeClient) here because the URL is controlled by the
+	// operator already. The URL should therefore be trusted as safe.
 	client := &http.Client{
 		Timeout: time.Duration(ctx.Config.TimeoutSeconds.ClientServer) * time.Second,
 	}

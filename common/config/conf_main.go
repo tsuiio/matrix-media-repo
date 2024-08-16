@@ -64,6 +64,7 @@ func NewDefaultMainConfig() MainRepoConfig {
 					"image/*",
 				},
 				DisallowedNetworks: []string{
+					// Keep in sync with federation.disallowedNetworks
 					"127.0.0.1/8",
 					"10.0.0.0/8",
 					"172.16.0.0/12",
@@ -75,6 +76,7 @@ func NewDefaultMainConfig() MainRepoConfig {
 					"fc00::/7",
 				},
 				AllowedNetworks: []string{
+					// Keep in sync with federation.allowedNetworks
 					"0.0.0.0/0", // "Everything"
 				},
 				DefaultLanguage: "en-US,en",
@@ -132,7 +134,24 @@ func NewDefaultMainConfig() MainRepoConfig {
 			Token:   "ReplaceMe",
 		},
 		Federation: FederationConfig{
-			BackoffAt: 20,
+			BackoffAt:    20,
+			IgnoredHosts: make([]string, 0),
+			DisallowedNetworks: []string{
+				// Keep in sync with urlPreviews.disallowedNetworks
+				"127.0.0.1/8",
+				"10.0.0.0/8",
+				"172.16.0.0/12",
+				"192.168.0.0/16",
+				"100.64.0.0/10",
+				"169.254.0.0/16",
+				"::1/128",
+				"fe80::/64",
+				"fc00::/7",
+			},
+			AllowedNetworks: []string{
+				// Keep in sync with urlPreviews.allowedNetworks
+				"0.0.0.0/0", // "Everything"
+			},
 		},
 		Plugins: []PluginConfig{},
 		Sentry: SentryConfig{

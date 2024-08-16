@@ -16,6 +16,7 @@ import (
 	"github.com/getsentry/sentry-go"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/t2bot/matrix-media-repo/common"
+	"github.com/t2bot/matrix-media-repo/common/config"
 	"github.com/t2bot/matrix-media-repo/common/rcontext"
 	"github.com/t2bot/matrix-media-repo/database"
 	"github.com/t2bot/matrix-media-repo/datastores"
@@ -196,8 +197,8 @@ func TryDownload(ctx rcontext.RequestContext, origin string, mediaId string) (*d
 				client := matrix.NewHttpClient(ctx, &matrix.HttpClientConfig{
 					Timeout:                time.Duration(ctx.Config.TimeoutSeconds.Federation) * time.Second,
 					AllowUnsafeCertificate: false,
-					AllowedCIDRs:           []string{},
-					DeniedCIDRs:            []string{},
+					AllowedCIDRs:           config.Get().Federation.AllowedNetworks,
+					DeniedCIDRs:            config.Get().Federation.DisallowedNetworks,
 				})
 				resp, err = client.Get(locationHeader)
 				if err != nil {

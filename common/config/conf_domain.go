@@ -34,6 +34,7 @@ func NewDefaultDomainConfig() DomainRepoConfig {
 				"image/*",
 			},
 			DisallowedNetworks: []string{
+				// Keep in sync with federation.disallowedNetworks
 				"127.0.0.1/8",
 				"10.0.0.0/8",
 				"172.16.0.0/12",
@@ -45,6 +46,7 @@ func NewDefaultDomainConfig() DomainRepoConfig {
 				"fc00::/7",
 			},
 			AllowedNetworks: []string{
+				// Keep in sync with federation.allowedNetworks
 				"0.0.0.0/0", // "Everything"
 			},
 			DefaultLanguage: "en-US,en",

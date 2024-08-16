@@ -11,6 +11,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/t2bot/matrix-media-repo/common/config"
 	"github.com/t2bot/matrix-media-repo/common/rcontext"
 )
 
@@ -118,8 +119,8 @@ func FederatedGet(ctx rcontext.RequestContext, reqUrl string, realHost string, d
 			Timeout:                time.Duration(ctx.Config.TimeoutSeconds.Federation) * time.Second,
 			AllowUnsafeCertificate: os.Getenv("MEDIA_REPO_UNSAFE_FEDERATION") == "true",
 			TLSServerName:          realHost,
-			AllowedCIDRs:           []string{},
-			DeniedCIDRs:            []string{},
+			AllowedCIDRs:           config.Get().Federation.AllowedNetworks,
+			DeniedCIDRs:            config.Get().Federation.DisallowedNetworks,
 		})
 
 		resp, err = client.Do(req)

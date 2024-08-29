@@ -2,6 +2,7 @@ package custom
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 
 	"github.com/getsentry/sentry-go"
@@ -42,8 +43,11 @@ func GetFederationInfo(r *http.Request, rctx rcontext.RequestContext, user _apim
 		sentry.CaptureException(err)
 		return _responses.InternalServerError(err.Error())
 	}
+	if versionResponse == nil {
+		return _responses.InternalServerError("version not found")
+	}
 
-	decoder := json.NewDecoder(versionResponse.Body)
+	decoder := json.NewDecoder(io.LimitReader(versionResponse.Body, 1*1024*1024))
 	out := make(map[string]interface{})
 	err = decoder.Decode(&out)
 	if err != nil {

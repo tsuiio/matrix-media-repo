@@ -118,7 +118,7 @@ func FederatedGet(ctx rcontext.RequestContext, reqUrl string, realHost string, d
 
 		// strip port first, certs are port-insensitive
 		h, _, err := net.SplitHostPort(realHost)
-		if err != nil {
+		if err == nil {
 			realHost = h
 			ctx.Log.Debug("Using simplified host for federation:", realHost)
 		} else {

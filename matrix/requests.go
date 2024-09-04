@@ -116,10 +116,14 @@ func FederatedGet(ctx rcontext.RequestContext, reqUrl string, realHost string, d
 			req.Header.Set("Authorization", auth)
 		}
 
+		// strip port first, certs are port-insensitive
 		h, _, err := net.SplitHostPort(realHost)
 		if err != nil {
-			realHost = h // strip port first, certs are port-insensitive
-		} // else ignore error (it will probably fail at the request)
+			realHost = h
+			ctx.Log.Debug("Using simplified host for federation:", realHost)
+		} else {
+			ctx.Log.Warn("Non-fatal error parsing host:port for federation:", err)
+		}
 
 		client := NewHttpClient(ctx, &HttpClientConfig{
 			Timeout:                time.Duration(ctx.Config.TimeoutSeconds.Federation) * time.Second,

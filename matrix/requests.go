@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -114,6 +115,11 @@ func FederatedGet(ctx rcontext.RequestContext, reqUrl string, realHost string, d
 			}
 			req.Header.Set("Authorization", auth)
 		}
+
+		h, _, err := net.SplitHostPort(realHost)
+		if err != nil {
+			realHost = h // strip port first, certs are port-insensitive
+		} // else ignore error (it will probably fail at the request)
 
 		client := NewHttpClient(ctx, &HttpClientConfig{
 			Timeout:                time.Duration(ctx.Config.TimeoutSeconds.Federation) * time.Second,

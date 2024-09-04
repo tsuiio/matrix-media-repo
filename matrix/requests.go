@@ -120,7 +120,6 @@ func FederatedGet(ctx rcontext.RequestContext, reqUrl string, realHost string, d
 		h, _, err := net.SplitHostPort(realHost)
 		if err == nil {
 			realHost = h
-			ctx.Log.Debug("Using simplified host for federation:", realHost)
 		} else {
 			ctx.Log.Warn("Non-fatal error parsing host:port for federation:", err)
 		}

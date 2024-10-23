@@ -18,6 +18,10 @@ import (
 )
 
 func doHttpGet(urlPayload *m.UrlPayload, languageHeader string, ctx rcontext.RequestContext) (*http.Response, error) {
+	if urlPayload.ParsedUrl.Scheme != "https" {
+		return nil, errors.New("must provide https url")
+	}
+
 	client := matrix.NewHttpClient(ctx, &matrix.HttpClientConfig{
 		Timeout:                time.Duration(ctx.Config.TimeoutSeconds.UrlPreviews) * time.Second,
 		AllowUnsafeCertificate: ctx.Config.UrlPreviews.UnsafeCertificates,

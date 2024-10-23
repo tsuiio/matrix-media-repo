@@ -96,6 +96,10 @@ func NewHttpClient(ctx rcontext.RequestContext, clientConfig *HttpClientConfig) 
 				return errors.New("too many redirects")
 			}
 
+			if req.URL.Scheme != "https" {
+				return errors.New("https downgrades are not allowed")
+			}
+
 			// Now that we're past the initial server name validation, clear it
 			safeTransport.TLSClientConfig.ServerName = ""
 

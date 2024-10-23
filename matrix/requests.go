@@ -82,7 +82,7 @@ func doRequest(ctx rcontext.RequestContext, method string, urlStr string, body i
 	return nil
 }
 
-func FederatedGet(ctx rcontext.RequestContext, reqUrl string, realHost string, destination string, useSigningKeyPath string) (*http.Response, error) {
+func FederatedGet(ctx rcontext.RequestContext, reqUrl string, realHost string, destination string, useSigningKeyPath string, followRedirects bool) (*http.Response, error) {
 	ctx.Log.Debug("Doing federated GET to " + reqUrl + " with host " + realHost)
 
 	cb := getFederationBreaker(realHost)
@@ -130,6 +130,7 @@ func FederatedGet(ctx rcontext.RequestContext, reqUrl string, realHost string, d
 			TLSServerName:          realHost,
 			AllowedCIDRs:           config.Get().Federation.AllowedNetworks,
 			DeniedCIDRs:            config.Get().Federation.DisallowedNetworks,
+			FollowRedirects:        followRedirects,
 		})
 
 		resp, err = client.Do(req)

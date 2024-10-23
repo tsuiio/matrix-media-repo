@@ -67,7 +67,7 @@ func TryDownload(ctx rcontext.RequestContext, origin string, mediaId string) (*d
 		usesMultipartFormat := false
 		if ctx.Config.SigningKeyPath != "" {
 			downloadUrl = fmt.Sprintf("%s/_matrix/federation/v1/media/download/%s", baseUrl, url.PathEscape(mediaId))
-			resp, err = matrix.FederatedGet(ctx, downloadUrl, realHost, origin, ctx.Config.SigningKeyPath)
+			resp, err = matrix.FederatedGet(ctx, downloadUrl, realHost, origin, ctx.Config.SigningKeyPath, false)
 			metrics.MediaDownloaded.With(prometheus.Labels{"origin": origin}).Inc()
 			if err != nil {
 				errFn(err)
@@ -102,7 +102,7 @@ func TryDownload(ctx rcontext.RequestContext, origin string, mediaId string) (*d
 		// Try fallback (unauthenticated)
 		if resp == nil {
 			downloadUrl = fmt.Sprintf("%s/_matrix/media/v3/download/%s/%s?allow_remote=false&allow_redirect=true", baseUrl, url.PathEscape(origin), url.PathEscape(mediaId))
-			resp, err = matrix.FederatedGet(ctx, downloadUrl, realHost, origin, matrix.NoSigningKey)
+			resp, err = matrix.FederatedGet(ctx, downloadUrl, realHost, origin, matrix.NoSigningKey, true)
 			metrics.MediaDownloaded.With(prometheus.Labels{"origin": origin}).Inc()
 			if err != nil {
 				errFn(err)
@@ -199,6 +199,7 @@ func TryDownload(ctx rcontext.RequestContext, origin string, mediaId string) (*d
 					AllowUnsafeCertificate: false,
 					AllowedCIDRs:           config.Get().Federation.AllowedNetworks,
 					DeniedCIDRs:            config.Get().Federation.DisallowedNetworks,
+					FollowRedirects:        true, // we may encounter redirects when following the manual redirect
 				})
 				resp, err = client.Get(locationHeader)
 				if err != nil {

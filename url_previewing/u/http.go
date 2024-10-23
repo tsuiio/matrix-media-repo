@@ -23,6 +23,7 @@ func doHttpGet(urlPayload *m.UrlPayload, languageHeader string, ctx rcontext.Req
 		AllowUnsafeCertificate: ctx.Config.UrlPreviews.UnsafeCertificates,
 		AllowedCIDRs:           ctx.Config.UrlPreviews.AllowedNetworks,
 		DeniedCIDRs:            ctx.Config.UrlPreviews.DisallowedNetworks,
+		FollowRedirects:        true, // we may need to chase some resources down
 	})
 
 	req, err := http.NewRequest("GET", urlPayload.ParsedUrl.String(), nil)

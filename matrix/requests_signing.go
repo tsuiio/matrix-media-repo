@@ -106,7 +106,7 @@ func QuerySigningKeys(serverName string) (ServerSigningKeys, error) {
 		}
 
 		keysUrl := url + "/_matrix/key/v2/server"
-		keysResponse, err := FederatedGet(ctx, keysUrl, hostname, serverName, NoSigningKey)
+		keysResponse, err := FederatedGet(ctx, keysUrl, hostname, serverName, NoSigningKey, false)
 		if keysResponse != nil {
 			defer keysResponse.Body.Close()
 		}

@@ -20,7 +20,8 @@ type HttpClientConfig struct {
 	AllowedCIDRs           []string
 	DeniedCIDRs            []string
 	// Used for federation. Set to the *real* server name, without port.
-	TLSServerName string
+	TLSServerName   string
+	FollowRedirects bool
 }
 
 func NewHttpClient(ctx rcontext.RequestContext, clientConfig *HttpClientConfig) *http.Client {
@@ -86,6 +87,11 @@ func NewHttpClient(ctx rcontext.RequestContext, clientConfig *HttpClientConfig) 
 		Transport: safeTransport,
 		Timeout:   clientConfig.Timeout,
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			if !clientConfig.FollowRedirects {
+				// Normally we'd use the last response instead of erroring, but we want to
+				// ensure things break when a redirect is encountered.
+				return errors.New("too many redirects (1 > 0)")
+			}
 			if len(via) > 5 {
 				return errors.New("too many redirects")
 			}

@@ -111,7 +111,7 @@ func NewHttpClient(ctx rcontext.RequestContext, clientConfig *HttpClientConfig) 
 }
 
 func safeControl(ctx rcontext.RequestContext, clientConfig *HttpClientConfig, network string, address string, conn syscall.RawConn) error {
-	if !(network == "tcp4" || network == "tcp6") {
+	if network != "tcp4" && network != "tcp6" {
 		return fmt.Errorf("%s is not a safe network type", network)
 	}
 

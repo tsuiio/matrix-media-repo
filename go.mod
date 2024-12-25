@@ -1,12 +1,12 @@
 module github.com/t2bot/matrix-media-repo
 
-go 1.22.0
+go 1.23
 
-toolchain go1.22.10
+toolchain go1.23.4
 
 require (
 	github.com/DavidHuie/gomigrate v0.0.0-20190826182718-4adc4b3de142
-	github.com/PuerkitoBio/goquery v1.9.1
+	github.com/PuerkitoBio/goquery v1.10.0
 	github.com/alioygur/is v1.0.3
 	github.com/bep/debounce v1.2.1
 	github.com/bwmarrin/snowflake v0.3.0

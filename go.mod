@@ -12,7 +12,7 @@ require (
 	github.com/bwmarrin/snowflake v0.3.0
 	github.com/cenk/backoff v2.2.1+incompatible // indirect
 	github.com/cupcake/sigil v0.0.0-20131127230922-6bf9722f2ae8
-	github.com/dhowden/tag v0.0.0-20240122214204-713ab0e94639
+	github.com/dhowden/tag v0.0.0-20240417053706-3d75831295e8
 	github.com/disintegration/imaging v1.6.2
 	github.com/dsoprea/go-exif/v3 v3.0.1
 	github.com/dustin/go-humanize v1.0.1

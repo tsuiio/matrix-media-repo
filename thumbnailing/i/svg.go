@@ -51,7 +51,7 @@ func (d svgGenerator) GenerateThumbnail(b io.Reader, contentType string, width i
 		return nil, errors.New("svg: error writing temp svg file: " + err.Error())
 	}
 
-	err = exec.Command("convert", tempFile1, tempFile2).Run()
+	err = exec.Command("magick", "SVG:"+tempFile1, "-resize", "'4096x4096>'", tempFile2).Run()
 	if err != nil {
 		return nil, errors.New("svg: error converting svg file: " + err.Error())
 	}

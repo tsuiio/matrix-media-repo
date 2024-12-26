@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 
 * MMR now requires Go 1.22 for compilation.
+* MMR now builds on a base image of `alpine:3.21`.
+* The global `repo.freezeUnauthenticatedMedia` option now defaults to `true`, enabling authenticated media by default. A future release will remove this option, requiring the freeze behaviour. See `config.sample.yaml` for details.
 
 ### Fixed
 
@@ -22,6 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 * Ensure the request parameters are correctly set for authenticated media client requests.
 * Ensure remote signing keys expire after at most 7 days.
 * Fixed parsing of `Authorization` headers for federated servers.
+* Ensure `ignoredHosts` is applied to unauthenticated requests.
 
 ## [1.3.7] - July 30, 2024
 

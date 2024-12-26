@@ -44,7 +44,7 @@ require (
 )
 
 require (
-	github.com/didip/tollbooth/v7 v7.0.2
+	github.com/didip/tollbooth/v8 v8.0.0
 	github.com/didip/tollbooth/v8 v8.0.0
 	github.com/docker/go-connections v0.5.0
 	github.com/go-redsync/redsync/v4 v4.13.0

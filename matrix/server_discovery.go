@@ -3,6 +3,7 @@ package matrix
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"os"
@@ -91,7 +92,7 @@ func GetServerApiUrl(hostname string) (string, string, error) {
 	}
 	if err == nil && r.StatusCode == http.StatusOK {
 		// Try parsing .well-known
-		decoder := json.NewDecoder(r.Body)
+		decoder := json.NewDecoder(io.LimitReader(r.Body, 1*1024*1024))
 		wk := &wellknownServerResponse{}
 		err3 := decoder.Decode(&wk)
 		if err3 == nil && wk.ServerAddr != "" {

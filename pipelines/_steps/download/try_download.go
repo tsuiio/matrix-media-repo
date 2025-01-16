@@ -75,7 +75,7 @@ func TryDownload(ctx rcontext.RequestContext, origin string, mediaId string) (*d
 				errFn(matrix.MakeServerNotAllowedError(ctx.Request.Host))
 				return
 			} else if resp.StatusCode == http.StatusNotFound {
-				decoder := json.NewDecoder(resp.Body)
+				decoder := json.NewDecoder(io.LimitReader(resp.Body, 1*1024*1024))
 				resp2 := resp // copy response in case we clear it out later
 				defer resp2.Body.Close()
 				mxerr := &matrix.ErrorResponse{}
@@ -168,6 +168,7 @@ func TryDownload(ctx rcontext.RequestContext, origin string, mediaId string) (*d
 				}
 			} else {
 				errFn(fmt.Errorf("expected application/json as the first part, got %s instead", partType))
+				return
 			}
 
 			ctx.Log.Debugf("Got metadata: %v", metadata)

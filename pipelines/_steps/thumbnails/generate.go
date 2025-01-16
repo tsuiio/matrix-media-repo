@@ -42,7 +42,12 @@ func Generate(ctx rcontext.RequestContext, mediaRecord *database.DbMedia, width 
 			ch <- generateResult{err: err}
 			return
 		}
-		fixedContentType := util.FixContentType(mediaRecord.ContentType)
+
+		fixedContentType, err := util.DetectMimeType(mediaStream)
+		if err != nil {
+			ch <- generateResult{err: err}
+			return
+		}
 
 		i, err := thumbnailing.GenerateThumbnail(mediaStream, fixedContentType, width, height, method, animated, ctx)
 		if err != nil {

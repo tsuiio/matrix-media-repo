@@ -52,7 +52,7 @@ func (d mp4Generator) GenerateThumbnail(b io.Reader, contentType string, width i
 		return nil, errors.New("mp4: error writing temp video file: " + err.Error())
 	}
 
-	err = exec.Command("ffmpeg", "-i", tempFile1, "-vf", "select=eq(n\\,0)", tempFile2).Run()
+	err = exec.Command("ffmpeg", "-f", "mp4", "-i", tempFile1, "-frames:v", "1", "-update", "true", "-vf", "scale='min(4096,iw)':'min(4096,ih)':force_original_aspect_ratio=1,pad=iw:ih:-1:-1,setsar=1", tempFile2).Run()
 	if err != nil {
 		return nil, errors.New("mp4: error converting video file: " + err.Error())
 	}

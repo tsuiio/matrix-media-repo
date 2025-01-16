@@ -51,7 +51,7 @@ func (d jpegxlGenerator) GenerateThumbnail(b io.Reader, contentType string, widt
 		return nil, errors.New("jpegxl: error writing temp jpegxl file: " + err.Error())
 	}
 
-	err = exec.Command("convert", tempFile1, tempFile2).Run()
+	err = exec.Command("magick", "JXL:"+tempFile1, "-resize", "'4096x4096>'", tempFile2).Run()
 	if err != nil {
 		return nil, errors.New("jpegxl: error converting jpegxl file: " + err.Error())
 	}

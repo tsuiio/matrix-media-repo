@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 * MMR now requires Go 1.22 for compilation.
 * MMR now builds on a base image of `alpine:3.21`.
 * The global `repo.freezeUnauthenticatedMedia` option now defaults to `true`, enabling authenticated media by default. A future release will remove this option, requiring the freeze behaviour. See `config.sample.yaml` for details.
+* For SVG and JPEGXL files, ImageMagick 7 is now required.
+* For MP4 files, ffmpeg 6 or 7 (use 7 for best results) is now required.
 
 ### Fixed
 

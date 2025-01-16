@@ -462,6 +462,7 @@ thumbnails:
     - "image/bmp"
     - "image/tiff"
     #- "image/svg+xml" # Be sure to have ImageMagick installed to thumbnail SVG files
+    #- "image/jxl" # Be sure to have ImageMagick installed to thumbnail JPEGXL files
     - "audio/mpeg"
     - "audio/ogg"
     - "audio/wav"

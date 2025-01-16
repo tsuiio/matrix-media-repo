@@ -117,7 +117,13 @@ func main() {
 				}
 				defer src.Close()
 
-				thumb, err := thumbnailing.GenerateThumbnail(src, record.ContentType, s.width, s.height, s.method, false, ctx)
+				fixedContentType, err := util.DetectMimeType(src)
+				if err != nil {
+					ctx.Log.Warn("Error detecting content type. ", s, err)
+					return
+				}
+
+				thumb, err := thumbnailing.GenerateThumbnail(src, fixedContentType, s.width, s.height, s.method, false, ctx)
 				if err != nil {
 					if thumb.Reader != nil {
 						err2 := thumb.Reader.Close()

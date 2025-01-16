@@ -11,10 +11,12 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/getsentry/sentry-go"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/t2bot/matrix-media-repo/common"
+	"github.com/t2bot/matrix-media-repo/common/config"
 	"github.com/t2bot/matrix-media-repo/common/rcontext"
 	"github.com/t2bot/matrix-media-repo/database"
 	"github.com/t2bot/matrix-media-repo/datastores"
@@ -65,7 +67,7 @@ func TryDownload(ctx rcontext.RequestContext, origin string, mediaId string) (*d
 		usesMultipartFormat := false
 		if ctx.Config.SigningKeyPath != "" {
 			downloadUrl = fmt.Sprintf("%s/_matrix/federation/v1/media/download/%s", baseUrl, url.PathEscape(mediaId))
-			resp, err = matrix.FederatedGet(ctx, downloadUrl, realHost, origin, ctx.Config.SigningKeyPath)
+			resp, err = matrix.FederatedGet(ctx, downloadUrl, realHost, origin, ctx.Config.SigningKeyPath, false)
 			metrics.MediaDownloaded.With(prometheus.Labels{"origin": origin}).Inc()
 			if err != nil {
 				errFn(err)
@@ -100,7 +102,7 @@ func TryDownload(ctx rcontext.RequestContext, origin string, mediaId string) (*d
 		// Try fallback (unauthenticated)
 		if resp == nil {
 			downloadUrl = fmt.Sprintf("%s/_matrix/media/v3/download/%s/%s?allow_remote=false&allow_redirect=true", baseUrl, url.PathEscape(origin), url.PathEscape(mediaId))
-			resp, err = matrix.FederatedGet(ctx, downloadUrl, realHost, origin, matrix.NoSigningKey)
+			resp, err = matrix.FederatedGet(ctx, downloadUrl, realHost, origin, matrix.NoSigningKey, true)
 			metrics.MediaDownloaded.With(prometheus.Labels{"origin": origin}).Inc()
 			if err != nil {
 				errFn(err)
@@ -193,7 +195,14 @@ func TryDownload(ctx rcontext.RequestContext, origin string, mediaId string) (*d
 					ctx.Log.Debug("Non-fatal error closing redirected MSC3916 body: ", err)
 				}
 
-				resp, err = http.DefaultClient.Get(locationHeader)
+				client := matrix.NewHttpClient(ctx, &matrix.HttpClientConfig{
+					Timeout:                time.Duration(ctx.Config.TimeoutSeconds.Federation) * time.Second,
+					AllowUnsafeCertificate: false,
+					AllowedCIDRs:           config.Get().Federation.AllowedNetworks,
+					DeniedCIDRs:            config.Get().Federation.DisallowedNetworks,
+					FollowRedirects:        true, // we may encounter redirects when following the manual redirect
+				})
+				resp, err = client.Get(locationHeader)
 				if err != nil {
 					errFn(err)
 					return

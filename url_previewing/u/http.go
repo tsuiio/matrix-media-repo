@@ -1,12 +1,9 @@
 package u
 
 import (
-	"context"
-	"crypto/tls"
 	"errors"
 	"io"
 	"mime"
-	"net"
 	"net/http"
 	"strconv"
 	"time"
@@ -14,68 +11,24 @@ import (
 	"github.com/ryanuber/go-glob"
 	"github.com/t2bot/matrix-media-repo/common"
 	"github.com/t2bot/matrix-media-repo/common/rcontext"
+	"github.com/t2bot/matrix-media-repo/matrix"
 	"github.com/t2bot/matrix-media-repo/url_previewing/m"
 	"github.com/t2bot/matrix-media-repo/util"
 	"github.com/t2bot/matrix-media-repo/util/readers"
 )
 
 func doHttpGet(urlPayload *m.UrlPayload, languageHeader string, ctx rcontext.RequestContext) (*http.Response, error) {
-	var client *http.Client
-
-	dialer := &net.Dialer{
-		Timeout:   time.Duration(ctx.Config.TimeoutSeconds.UrlPreviews) * time.Second,
-		KeepAlive: time.Duration(ctx.Config.TimeoutSeconds.UrlPreviews) * time.Second,
+	if urlPayload.ParsedUrl.Scheme != "https" {
+		return nil, errors.New("must provide https url")
 	}
 
-	dialContext := func(ctx2 context.Context, network, addr string) (conn net.Conn, e error) {
-		if network != "tcp" {
-			return nil, errors.New("invalid network: expected tcp")
-		}
-
-		safeIp, safePort, err := getSafeAddress(addr, ctx)
-		if err != nil {
-			return nil, err
-		}
-
-		return dialer.DialContext(ctx2, network, net.JoinHostPort(safeIp.String(), safePort))
-	}
-
-	if ctx.Config.UrlPreviews.UnsafeCertificates {
-		ctx.Log.Warn("Ignoring any certificate errors while making request")
-		tr := &http.Transport{
-			DisableKeepAlives: true,
-			DialContext:       dialContext,
-			TLSClientConfig:   &tls.Config{InsecureSkipVerify: true},
-			// Based on https://github.com/matrix-org/gomatrixserverlib/blob/51152a681e69a832efcd934b60080b92bc98b286/client.go#L74-L90
-			DialTLSContext: func(ctx2 context.Context, network, addr string) (net.Conn, error) {
-				rawconn, err := net.Dial(network, addr)
-				if err != nil {
-					return nil, err
-				}
-				// Wrap a raw connection ourselves since tls.Dial defaults the SNI
-				conn := tls.Client(rawconn, &tls.Config{
-					ServerName:         "",
-					InsecureSkipVerify: true,
-				})
-				if err := conn.Handshake(); err != nil {
-					return nil, err
-				}
-				return conn, nil
-			},
-		}
-		client = &http.Client{
-			Timeout:   time.Duration(ctx.Config.TimeoutSeconds.UrlPreviews) * time.Second,
-			Transport: tr,
-		}
-	} else {
-		client = &http.Client{
-			Timeout: time.Duration(ctx.Config.TimeoutSeconds.UrlPreviews) * time.Second,
-			Transport: &http.Transport{
-				DisableKeepAlives: true,
-				DialContext:       dialContext,
-			},
-		}
-	}
+	client := matrix.NewHttpClient(ctx, &matrix.HttpClientConfig{
+		Timeout:                time.Duration(ctx.Config.TimeoutSeconds.UrlPreviews) * time.Second,
+		AllowUnsafeCertificate: ctx.Config.UrlPreviews.UnsafeCertificates,
+		AllowedCIDRs:           ctx.Config.UrlPreviews.AllowedNetworks,
+		DeniedCIDRs:            ctx.Config.UrlPreviews.DisallowedNetworks,
+		FollowRedirects:        true, // we may need to chase some resources down
+	})
 
 	req, err := http.NewRequest("GET", urlPayload.ParsedUrl.String(), nil)
 	if err != nil {

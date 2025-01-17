@@ -7,15 +7,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+*Nothing yet*
+
+### [1.3.8] - January 16, 2025
+
+### Security
+
+* Limit untrusted decoders during thumbnailing ([GHSA-rcxc-wjgw-579r](https://github.com/t2bot/matrix-media-repo/security/advisories/GHSA-rcxc-wjgw-579r) / [CVE-2024-56515](https://www.cve.org/CVERecord?id=CVE-2024-56515))
+* Improve handling of JSON ([GHSA-gp86-q8hg-fpxj](https://github.com/t2bot/matrix-media-repo/security/advisories/GHSA-gp86-q8hg-fpxj) / [CVE-2024-52791](https://www.cve.org/CVERecord?id=CVE-2024-52791))
+* Fix SSRF issues ([GHSA-r6jg-jfv6-2fjv](https://github.com/t2bot/matrix-media-repo/security/advisories/GHSA-r6jg-jfv6-2fjv) / [CVE-2024-52602](https://www.cve.org/CVERecord?id=CVE-2024-52602))
+
 ### Added
 
 * Allow guests to access uploaded media, as per [MSC4189](https://github.com/matrix-org/matrix-spec-proposals/pull/4189).
+* The thumbnailer can now be run independently with the `thumbnailer` binary. See `thumbnailer -help` for details.
 
 ### Changed
 
 * MMR now requires Go 1.22 for compilation.
 * MMR now builds on a base image of `alpine:3.21`.
 * The global `repo.freezeUnauthenticatedMedia` option now defaults to `true`, enabling authenticated media by default. A future release will remove this option, requiring the freeze behaviour. See `config.sample.yaml` for details.
+* For SVG and JPEGXL files, ImageMagick 7 is now required.
+* For MP4 files, ffmpeg 6 or 7 (use 7 for best results) is now required.
 
 ### Fixed
 
@@ -43,6 +56,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 * Ensure a `boundary` is set on federation downloads, allowing the download to work.
 
 ## [1.3.5] - July 10, 2024
+
+### Security
+
+This release fixes the following security concerns:
+
+* [GHSA-8vmr-h7h5-cqhg](https://github.com/t2bot/matrix-media-repo/security/advisories/GHSA-8vmr-h7h5-cqhg) / [CVE-2024-36402](https://www.cve.org/CVERecord?id=CVE-2024-36402)
+* [GHSA-vc2m-hw89-qjxf](https://github.com/t2bot/matrix-media-repo/security/advisories/GHSA-vc2m-hw89-qjxf) / [CVE-2024-36403](https://www.cve.org/CVERecord?id=CVE-2024-36403)
 
 ### Added
 
@@ -557,7 +577,8 @@ a large database (more than about 100k uploaded files), run the following steps 
 * Various other features that would be expected like maximum/minimum size controls, rate limiting, etc. Check out the
   sample config for a better idea of what else is possible.
 
-[unreleased]: https://github.com/t2bot/matrix-media-repo/compare/v1.3.7...HEAD
+[unreleased]: https://github.com/t2bot/matrix-media-repo/compare/v1.3.8...HEAD
+[1.3.8]: https://github.com/t2bot/matrix-media-repo/compare/v1.3.7...v1.3.8
 [1.3.7]: https://github.com/t2bot/matrix-media-repo/compare/v1.3.6...v1.3.7
 [1.3.6]: https://github.com/t2bot/matrix-media-repo/compare/v1.3.5...v1.3.6
 [1.3.5]: https://github.com/t2bot/matrix-media-repo/compare/v1.3.4...v1.3.5

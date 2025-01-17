@@ -2,8 +2,6 @@ package matrix
 
 import (
 	"bytes"
-	"context"
-	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -14,6 +12,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/t2bot/matrix-media-repo/common/config"
 	"github.com/t2bot/matrix-media-repo/common/rcontext"
 )
 
@@ -47,6 +46,8 @@ func doRequest(ctx rcontext.RequestContext, method string, urlStr string, body i
 		req.Header.Set("X-Real-IP", ipAddr)
 	}
 
+	// Note: We don't use the matrix.NewHttpClient (safeClient) here because the URL is controlled by the
+	// operator already. The URL should therefore be trusted as safe.
 	client := &http.Client{
 		Timeout: time.Duration(ctx.Config.TimeoutSeconds.ClientServer) * time.Second,
 	}
@@ -81,7 +82,7 @@ func doRequest(ctx rcontext.RequestContext, method string, urlStr string, body i
 	return nil
 }
 
-func FederatedGet(ctx rcontext.RequestContext, reqUrl string, realHost string, destination string, useSigningKeyPath string) (*http.Response, error) {
+func FederatedGet(ctx rcontext.RequestContext, reqUrl string, realHost string, destination string, useSigningKeyPath string, followRedirects bool) (*http.Response, error) {
 	ctx.Log.Debug("Doing federated GET to " + reqUrl + " with host " + realHost)
 
 	cb := getFederationBreaker(realHost)
@@ -115,64 +116,22 @@ func FederatedGet(ctx rcontext.RequestContext, reqUrl string, realHost string, d
 			req.Header.Set("Authorization", auth)
 		}
 
-		var client *http.Client
-		if os.Getenv("MEDIA_REPO_UNSAFE_FEDERATION") != "true" {
-			// This is how we verify the certificate is valid for the host we expect.
-			// Previously using `req.URL.Host` we'd end up changing which server we were
-			// connecting to (ie: matrix.org instead of matrix.org.cdn.cloudflare.net),
-			// which obviously doesn't help us. We needed to do that though because the
-			// HTTP client doesn't verify against the req.Host certificate, but it does
-			// handle it off the req.URL.Host. So, we need to tell it which certificate
-			// to verify.
-
-			h, _, err := net.SplitHostPort(realHost)
-			if err == nil {
-				// Strip the port first, certs are port-insensitive
-				realHost = h
-			}
-			client = &http.Client{
-				Transport: &http.Transport{
-					TLSClientConfig: &tls.Config{
-						ServerName: realHost,
-					},
-				},
-			}
+		// strip port first, certs are port-insensitive
+		h, _, err := net.SplitHostPort(realHost)
+		if err == nil {
+			realHost = h
 		} else {
-			ctx.Log.Warn("Ignoring any certificate errors while making request")
-			tr := &http.Transport{
-				DisableKeepAlives: true,
-				TLSClientConfig:   &tls.Config{InsecureSkipVerify: true},
-				// Based on https://github.com/matrix-org/gomatrixserverlib/blob/51152a681e69a832efcd934b60080b92bc98b286/client.go#L74-L90
-				DialTLSContext: func(ctx2 context.Context, network, addr string) (net.Conn, error) {
-					rawconn, err := net.Dial(network, addr)
-					if err != nil {
-						return nil, err
-					}
-					// Wrap a raw connection ourselves since tls.Dial defaults the SNI
-					conn := tls.Client(rawconn, &tls.Config{
-						ServerName:         "",
-						InsecureSkipVerify: true,
-					})
-					if err := conn.Handshake(); err != nil {
-						return nil, err
-					}
-					return conn, nil
-				},
-			}
-			client = &http.Client{
-				Transport: tr,
-			}
+			ctx.Log.Warn("Non-fatal error parsing host:port for federation:", err)
 		}
 
-		client.Timeout = time.Duration(ctx.Config.TimeoutSeconds.UrlPreviews) * time.Second
-		client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-			if len(via) > 5 { // arbitrary
-				return errors.New("too many redirects")
-			}
-			ctx.Log.Debugf("Redirected to %s", req.URL.String())
-			client.Transport = nil // Clear our TLS handler as we're out of the Matrix certificate verification steps
-			return nil
-		}
+		client := NewHttpClient(ctx, &HttpClientConfig{
+			Timeout:                time.Duration(ctx.Config.TimeoutSeconds.Federation) * time.Second,
+			AllowUnsafeCertificate: os.Getenv("MEDIA_REPO_UNSAFE_FEDERATION") == "true",
+			TLSServerName:          realHost,
+			AllowedCIDRs:           config.Get().Federation.AllowedNetworks,
+			DeniedCIDRs:            config.Get().Federation.DisallowedNetworks,
+			FollowRedirects:        followRedirects,
+		})
 
 		resp, err = client.Do(req)
 		if err != nil {

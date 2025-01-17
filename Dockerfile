@@ -1,6 +1,6 @@
 # ---- Stage 0 ----
 # Builds media repo binaries
-FROM golang:1.23-alpine3.21 AS builder
+FROM golang:1.23.5-alpine3.21 AS builder
 
 # Install build dependencies
 RUN apk add --no-cache git musl-dev dos2unix build-base libde265-dev
@@ -50,19 +50,19 @@ RUN make install
 
 COPY --from=builder /opt/bin/plugin_antispam_ocr /plugins/
 COPY --from=builder \
- /opt/bin/media_repo \
- /opt/bin/import_synapse \
- /opt/bin/import_dendrite \
- /opt/bin/export_synapse_for_import \
- /opt/bin/export_dendrite_for_import \
- /opt/bin/import_to_synapse \
- /opt/bin/gdpr_export \
- /opt/bin/gdpr_import \
- /opt/bin/s3_consistency_check \
- /opt/bin/combine_signing_keys \
- /opt/bin/generate_signing_key \
- /opt/bin/thumbnailer \
- /usr/local/bin/
+        /opt/bin/media_repo \
+        /opt/bin/import_synapse \
+        /opt/bin/import_dendrite \
+        /opt/bin/export_synapse_for_import \
+        /opt/bin/export_dendrite_for_import \
+        /opt/bin/import_to_synapse \
+        /opt/bin/gdpr_export \
+        /opt/bin/gdpr_import \
+        /opt/bin/s3_consistency_check \
+        /opt/bin/combine_signing_keys \
+        /opt/bin/generate_signing_key \
+        /opt/bin/thumbnailer \
+        /usr/local/bin/
 
 COPY ./config.sample.yaml /etc/media-repo.yaml.sample
 COPY ./docker/run.sh /usr/local/bin/

@@ -1,8 +1,6 @@
 module github.com/t2bot/matrix-media-repo
 
-go 1.23
-
-toolchain go1.23.4
+go 1.23.5
 
 require (
 	github.com/DavidHuie/gomigrate v0.0.0-20190826182718-4adc4b3de142

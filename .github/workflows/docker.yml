@@ -1,8 +1,8 @@
 name: Create and publish a Docker image
 
 on:
-  push:
-    tags: ["*"]
+  release:
+    types: [published]
 
 env:
   REGISTRY: ghcr.io
@@ -104,18 +104,15 @@ jobs:
           images: ${{ env.REGISTRY  }}/${{ env.IMAGE_NAME }}
           tags: |
             type=sha
-            type=ref,event=branch
-            type=ref,event=pr
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=semver,pattern={{version}},enable={{is_default_branch}}
-            type=semver,pattern={{major}},enable={{is_default_branch}}
+            type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
 
       - name: Create manifest list and push
         working-directory: /tmp/digests
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-          $(printf '${{ env.REGISTRY  }}/${{ env.IMAGE_NAME }}@sha256:%s ' *)
+          $(printf '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@sha256:%s ' *)
 
       - name: Retrieve image
         id: retrieve-image

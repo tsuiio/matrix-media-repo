@@ -47,7 +47,7 @@ require (
 	github.com/go-redsync/redsync/v4 v4.13.0
 	github.com/h2non/filetype v1.1.3
 	github.com/julienschmidt/httprouter v1.3.0
-	github.com/minio/minio-go/v7 v7.0.82
+	github.com/minio/minio-go/v7 v7.0.83
 	github.com/panjf2000/ants/v2 v2.10.0
 	github.com/redis/go-redis/v9 v9.7.0
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06

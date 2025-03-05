@@ -60,7 +60,7 @@ require (
 	github.com/t2bot/pgo-fleet/embedded v1.0.1
 	github.com/testcontainers/testcontainers-go v0.35.0
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.35.0
-	golang.org/x/sync v0.10.0
+	golang.org/x/sync v0.12.0
 	golang.org/x/term v0.28.0
 )
 

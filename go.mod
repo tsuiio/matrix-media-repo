@@ -49,7 +49,7 @@ require (
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/minio/minio-go/v7 v7.0.84
 	github.com/panjf2000/ants/v2 v2.11.0
-	github.com/redis/go-redis/v9 v9.7.0
+	github.com/redis/go-redis/v9 v9.10.0
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06
 	github.com/stretchr/testify v1.10.0
 	github.com/strukturag/libheif v1.19.5

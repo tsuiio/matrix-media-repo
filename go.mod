@@ -24,7 +24,7 @@ require (
 	github.com/hashicorp/go-hclog v1.6.3
 	github.com/hashicorp/go-plugin v1.6.2
 	github.com/k3a/html2text v1.2.1
-	github.com/kettek/apng v0.0.0-20220823221153-ff692776a607
+	github.com/kettek/apng v0.0.0-20250827064933-2bb5f5fcf253
 	github.com/lestrrat/go-file-rotatelogs v0.0.0-20180223000712-d3151e2a480f
 	github.com/lib/pq v1.10.9
 	github.com/patrickmn/go-cache v2.1.0+incompatible

@@ -1,6 +1,6 @@
 module github.com/t2bot/matrix-media-repo
 
-go 1.23.5
+go 1.25.0
 
 require (
 	github.com/DavidHuie/gomigrate v0.0.0-20190826182718-4adc4b3de142
@@ -61,7 +61,7 @@ require (
 	github.com/testcontainers/testcontainers-go v0.35.0
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.35.0
 	golang.org/x/sync v0.10.0
-	golang.org/x/term v0.28.0
+	golang.org/x/term v0.42.0
 )
 
 require (
@@ -140,7 +140,7 @@ require (
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.19.0 // indirect
 	go.opentelemetry.io/otel/metric v1.33.0 // indirect
 	go.opentelemetry.io/otel/trace v1.33.0 // indirect
-	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/sys v0.43.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20241216192217-9240e9c98484 // indirect
 	google.golang.org/protobuf v1.36.0 // indirect

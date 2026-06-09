@@ -26,7 +26,7 @@ RUN ./build.sh
 
 # ---- Stage 1 ----
 # Final runtime stage.
-FROM alpine:3.21
+FROM alpine:3.24
 
 RUN mkdir /plugins
 RUN apk add --no-cache \

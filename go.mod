@@ -35,7 +35,7 @@ require (
 	github.com/ryanuber/go-glob v1.0.0
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d
 	github.com/sebest/xff v0.0.0-20210106013422-671bd2870b3a
-	github.com/sirupsen/logrus v1.9.3
+	github.com/sirupsen/logrus v1.10.1
 	golang.org/x/crypto v0.32.0 // indirect
 	golang.org/x/image v0.23.0
 	golang.org/x/net v0.34.0
@@ -51,7 +51,7 @@ require (
 	github.com/panjf2000/ants/v2 v2.11.0
 	github.com/redis/go-redis/v9 v9.7.0
 	github.com/sabhiram/go-gitignore v0.0.0-20210923224102-525f6e181f06
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.12.0
 	github.com/strukturag/libheif v1.19.5
 	github.com/t2bot/go-leaky-bucket v1.0.0
 	github.com/t2bot/go-singleflight-streams v1.0.0

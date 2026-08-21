@@ -17,7 +17,7 @@ require (
 	github.com/dyatlov/go-oembed v0.0.0-20191103150536-a57c85b3b37c
 	github.com/faiface/beep v1.1.0
 	github.com/fogleman/gg v1.3.0
-	github.com/fsnotify/fsnotify v1.8.0
+	github.com/fsnotify/fsnotify v1.10.1
 	github.com/gabriel-vasile/mimetype v1.4.8
 	github.com/getsentry/sentry-go v0.31.1
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
